@@ -1,0 +1,19 @@
+.timer {
+    margin-top: 64px;
+    display: flex;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.text {
+    display: flex;
+    justify-content: center;
+}
+
+.btn {
+    margin-top: 64px;
+    
+    &:last-child {
+        margin-top: 18px;
+    }
+}

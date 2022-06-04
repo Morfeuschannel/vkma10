@@ -2,34 +2,18 @@ import React from 'react'
 import { useState } from 'react'
 import Location from './Location'
 
-import Pirate from '../img/pirate.jpg'
-import Zinger from '../img/zinger.jpg'
-import Ostankino from '../img/ostankino.jpg'
-import Subway from '../img/metro.jpg'
+import { Button } from '@vkontakte/vkui'
 
-const Locations = () => {
-
-    const [locations, setLocations] = useState([
-        {
-            img: Pirate,
-            location: 'Пиратский корабль'
-        },
-        {
-            img: Zinger,
-            location: 'Офис ВКонтакте'
-        },
-        {
-            img: Ostankino,
-            location: 'Останкино'
-        },
-        {
-            img: Subway,
-            location: 'Метро'
-        }
-	])
+const Locations = ({locations, go}) => {
 
     return (
         <div>
+            <Button
+                size='m'
+                stretched
+                data-to='newLocation'
+                onClick={go}
+            >Добавить новую</Button>
             {
                 locations.map((loc, i) => 
                     <Location

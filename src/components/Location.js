@@ -3,12 +3,13 @@ import React from 'react'
 import styles from './location.module.scss'
 
 const Location = ({img, location, role}) => {
+
     return (
         <div className={styles.location}>
             <div className={styles.title}>{location}</div>
-            {role
+            {typeof role != 'object'
                 ?
-                <div className={styles.role}>Роль: {role}</div>
+                <div className={styles.role}>{role}</div>
                 :
                 null
             }
