@@ -9,7 +9,7 @@ const Timer = ({id, go, players, flash, mafia}) => {
 
     const Completionist = () => <div>Время вышло! {mafia} был(а) шпионом!</div>;
 
-    const renderer = ({ hours, minutes, seconds, completed }) => {
+    const renderer = ({minutes, seconds, completed }) => {
         if (completed) {
             flash();
             return <Completionist />;

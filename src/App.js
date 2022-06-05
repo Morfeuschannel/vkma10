@@ -3,6 +3,9 @@ import bridge from '@vkontakte/vk-bridge';
 import { View, ScreenSpinner, AdaptivityProvider, AppRoot, ConfigProvider, SplitLayout, SplitCol } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
 
+import io from 'socket.io-client';
+const socket = io.connect('https://62.113.111.234:3001');
+
 import Home from './panels/Home';
 import Locs from './panels/Locs';
 import New from './panels/New';
@@ -19,8 +22,12 @@ const App = () => {
 	const [scheme, setScheme] = useState('bright_light')
 	const [activePanel, setActivePanel] = useState('home');
 	const [fetchedUser, setUser] = useState(null);
+	const [popout, setPopout] = useState(<ScreenSpinner size='large' />);
 	const [players, setPlayers] = useState(null);
 	const [mafia, setMafia] = useState(null);
+	const [room, setRoom] = useState(null);
+	const [spy, setSpy] = useState(null);
+	const [location, setLocation] = useState(null);
 
 	const [locations, setLocations] = useState([
         {
@@ -56,6 +63,7 @@ const App = () => {
 		async function fetchData() {
 			const user = await bridge.send('VKWebAppGetUserInfo');
 			setUser(user);
+			setPopout(null);
 		}
 		fetchData();
 	}, []);
@@ -68,13 +76,19 @@ const App = () => {
 	};
 
 	const play = e => {
-		setPlayers(JSON.parse(e.currentTarget.dataset.users))
+		const players = JSON.parse(e.currentTarget.dataset.users);
+		const newplayers = [fetchedUser, ...players]
+		setPlayers(newplayers)
 		setActivePanel(e.currentTarget.dataset.to)
 	}
 
 	const setLoc = e => {
 		let newData = JSON.parse(e)
 		setLocations([newData, ...locations])
+	}
+	
+	const changeRoom = e => {
+		setRoom(JSON.parse(e.currentTarget.dataset.to.id))
 	}
 
 	const flash = () => {
@@ -86,6 +100,19 @@ const App = () => {
         setTimeout(() => {bridge.send("VKWebAppFlashSetLevel", {"level": 0});}, 5000);
 	}
 
+	useEffect(() => {
+        socket.on('game_info', (data) => {
+			setLocations(data.locations)
+			setPlayers(data.users)
+			setRoom(data.room)
+			setLocation(data.location)
+			setSpy(data.spy)
+			setTimeout(() => {
+				setActivePanel('game')
+			}, 300)
+        })
+	}, [socket]);
+
 	return (
 		<ConfigProvider scheme={scheme}>
 			<AdaptivityProvider>
@@ -95,8 +122,8 @@ const App = () => {
 							<View activePanel={activePanel}>
 								<Home id='home' fetchedUser={fetchedUser} go={go} />
 								<Locs id='locs' locations={locations} setLocations={setLocations} go={go} />
-								<New id='new' go={go} play={play} />
-								<Game id='game' go={go} locations={locations} players={players} />
+								<New id='new' socket={socket} locations={locations} room={room} changeRoom={changeRoom} fetchedUser={fetchedUser} go={go} play={play} />
+								<Game id='game' spy={spy} location={location} room={room} socket={socket} flash={flash} fetchedUser={fetchedUser} setRoom={setRoom} go={go} locations={locations} players={players} />
 								<Timer id='timer' mafia={mafia} bridge={bridge} go={go} flash={flash} players={players} />
 								<NewLocation id='newLocation' go={go} locations={locations} setLoc={setLoc} />
 							</View>
