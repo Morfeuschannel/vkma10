@@ -4,7 +4,7 @@ import { View, ScreenSpinner, AdaptivityProvider, AppRoot, ConfigProvider, Split
 import '@vkontakte/vkui/dist/vkui.css';
 
 import io from 'socket.io-client';
-const socket = io.connect('https://62.113.111.234:3001');
+const socket = io.connect('https://vkma.ivstepin20.beget.tech:3001', {secure: true});
 
 import Home from './panels/Home';
 import Locs from './panels/Locs';

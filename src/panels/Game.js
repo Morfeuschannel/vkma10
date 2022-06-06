@@ -48,7 +48,7 @@ const Game = ({id, go, players, locations, location, spy, setLocation, socket, f
                     <Group>
                         <Div>
                             <Countdown
-                                date={Date.now() + players.length * 1000}
+                                date={Date.now() + players.length * 60000}
                                 renderer={renderer}
                             />
                         </Div>
